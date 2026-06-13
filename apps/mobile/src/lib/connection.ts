@@ -7,6 +7,7 @@
 import { io, type Socket } from 'socket.io-client';
 import {
   DEFAULT_RADIUS_M,
+  type ChatMessage,
   type ClientToServer,
   type JoinIncoming,
   type LocationPing,
@@ -24,6 +25,7 @@ export interface ConnectionEvents {
   onPartnerPing(loc: LocationPing): void;
   onMet(): void;
   onPartnerEnded(): void;
+  onChat(message: ChatMessage): void;
 }
 
 export interface RunConnection {
@@ -31,6 +33,7 @@ export interface RunConnection {
   ping(loc: LocationPing): void;
   requestJoin(toSessionId: string, message?: string): void;
   respond(requestId: string, accept: boolean): void;
+  sendChat(text: string): void;
   end(): void;
 }
 
@@ -46,6 +49,7 @@ export class SocketConnection implements RunConnection {
     this.socket.on('partner:ping', ({ loc }) => events.onPartnerPing(loc));
     this.socket.on('rendezvous:met', events.onMet);
     this.socket.on('partner:ended', events.onPartnerEnded);
+    this.socket.on('chat:message', events.onChat);
   }
 
   start(profile: RunnerProfile, loc: LocationPing): Promise<string> {
@@ -67,6 +71,10 @@ export class SocketConnection implements RunConnection {
 
   respond(requestId: string, accept: boolean): void {
     this.socket.emit('join:respond', { requestId, accept });
+  }
+
+  sendChat(text: string): void {
+    this.socket.emit('chat:send', { text });
   }
 
   end(): void {

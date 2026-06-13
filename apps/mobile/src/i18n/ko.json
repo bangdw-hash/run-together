@@ -32,10 +32,47 @@
   "summary": {
     "title": "오늘의 러닝",
     "time": "시간",
+    "distance": "거리",
+    "avgPace": "평균 페이스",
     "ranTogether": "{{nickname}} 님과 함께 달렸어요!",
     "kudos": "👏 칭찬 보내기",
     "kudosSent": "칭찬을 보냈어요!",
+    "share": "📸 기록 공유하기",
+    "shareText": "런투게더로 {{duration}} 동안 {{distance}} 달렸어요! 페이스 {{pace}} 🏃 #런투게더 #RunTogether",
     "done": "완료"
+  },
+  "chat": {
+    "title": "채팅",
+    "placeholder": "메시지 입력… (연락처는 자동 마스킹)",
+    "send": "전송"
+  },
+  "emergency": {
+    "button": "SOS",
+    "confirmTitle": "긴급 위치 공유",
+    "confirmBody": "등록된 보호자에게 현재 위치를 SMS로 보낼까요?",
+    "send": "보내기",
+    "cancel": "취소",
+    "sent": "보호자에게 현재 위치를 전송했어요.",
+    "demo": "(데모) 실제 서비스에서는 보호자에게 SMS가 발송됩니다."
+  },
+  "auth": {
+    "phoneTitle": "전화번호로 시작하기",
+    "phoneHint": "인증 코드를 SMS로 보내드려요. 안전한 매칭을 위해 전화번호 인증이 필요해요.",
+    "phonePlaceholder": "+82 10-1234-5678",
+    "sendCode": "인증 코드 받기",
+    "codeTitle": "인증 코드 입력",
+    "codeHint": "{{phone}} 으로 보낸 6자리 코드를 입력하세요",
+    "verify": "확인",
+    "error": "인증에 실패했어요. 다시 시도해 주세요.",
+    "profileTitle": "프로필 만들기",
+    "gender": "성별",
+    "female": "여성",
+    "male": "남성",
+    "other": "기타",
+    "ageGroup": "연령대",
+    "femaleOnly": "여성 러너와만 매칭",
+    "save": "시작하기",
+    "skipDemo": "로그인 없이 데모 체험"
   },
   "settings": {
     "title": "설정",

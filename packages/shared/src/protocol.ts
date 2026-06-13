@@ -59,6 +59,15 @@ export interface ClientToServer {
     ack: (res: { requestId: string } | { error: ProtocolError }) => void,
   ) => void;
   'join:respond': (p: { requestId: string; accept: boolean }) => void;
+  /** In-run chat with the matched partner only. PII is masked server-side. */
+  'chat:send': (p: { text: string }) => void;
+}
+
+export interface ChatMessage {
+  fromSessionId: string;
+  nickname: string;
+  text: string;
+  ts: number;
 }
 
 /** Server → Client events. */
@@ -74,6 +83,8 @@ export interface ServerToClient {
   'partner:ping': (p: { loc: LocationPing }) => void;
   'rendezvous:met': () => void;
   'partner:ended': () => void;
+  /** Delivered to both members of the pair (sender gets the masked echo). */
+  'chat:message': (m: ChatMessage) => void;
 }
 
 export type ProtocolError =

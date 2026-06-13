@@ -111,6 +111,13 @@ describe('gateway protocol', () => {
       alice.emit('session:ping', { loc: { ...projectPoint(bobLoc, 0, 10), ts: Date.now() } });
       await Promise.all([aliceMet, bobPing]);
 
+      // Matched pair can chat; PII is masked before relay.
+      const bobChat = once<{ text: string; nickname: string }>(bob, 'chat:message');
+      alice.emit('chat:send', { text: 'my number is 010-1234-5678' });
+      const chat = await bobChat;
+      expect(chat.nickname).toBe('alice');
+      expect(chat.text).toBe('my number is ***-****-****');
+
       // Ending one side notifies the partner.
       const ended = once<void>(bob, 'partner:ended');
       alice.emit('session:end');

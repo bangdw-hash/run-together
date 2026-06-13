@@ -12,6 +12,7 @@ import {
   haversineM,
   paceToMps,
   computeRendezvous,
+  maskPii,
   type ClientToServer,
   type ServerToClient,
 } from '@run-together/shared';
@@ -121,6 +122,22 @@ export class Gateway {
       });
       // The accepter (host) keeps running; the requester intercepts.
       this.emitRendezvous(host(from, to), joiner(from, to));
+    });
+
+    socket.on('chat:send', ({ text }) => {
+      const session = this.store.getBySocket(socket.id);
+      const partner = session?.partnerSessionId
+        ? this.store.get(session.partnerSessionId)
+        : undefined;
+      if (!session || !partner || !text.trim()) return;
+      const message = {
+        fromSessionId: session.id,
+        nickname: session.profile.nickname,
+        text: maskPii(text.trim()).slice(0, 1000),
+        ts: Date.now(),
+      };
+      this.io.to(partner.socketId).emit('chat:message', message);
+      this.io.to(session.socketId).emit('chat:message', message);
     });
 
     socket.on('session:end', () => this.teardown(socket.id));

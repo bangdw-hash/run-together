@@ -9,6 +9,7 @@ import {
   bearingDeg,
   computeRendezvous,
   haversineM,
+  maskPii,
   paceToMps,
   projectPoint,
   snapToGrid,
@@ -104,6 +105,31 @@ export class DemoConnection implements RunConnection {
     if (!accept) return;
     const inviter = this.runners.find((r) => `demo-req-${r.sessionId}` === requestId);
     if (inviter && !this.partner) this.pairWith(inviter);
+  }
+
+  sendChat(text: string): void {
+    if (!this.partner) return;
+    // Echo the masked message back (mirrors the gateway), then auto-reply.
+    this.events.onChat({
+      fromSessionId: 'demo-session-me',
+      nickname: 'me',
+      text: maskPii(text.trim()).slice(0, 1000),
+      ts: Date.now(),
+    });
+    const partner = this.partner;
+    const replies =
+      this.locale === 'ko'
+        ? ['좋아요, 그 페이스로 가요!', '거의 다 왔어요 👋', '합류 지점에서 봬요!']
+        : ['Sounds good, keeping that pace!', 'Almost there 👋', 'See you at the meeting point!'];
+    this.later(1500 + Math.random() * 2000, () => {
+      if (this.partner !== partner) return;
+      this.events.onChat({
+        fromSessionId: partner.sessionId,
+        nickname: partner.nickname,
+        text: replies[Math.floor(Math.random() * replies.length)],
+        ts: Date.now(),
+      });
+    });
   }
 
   end(): void {

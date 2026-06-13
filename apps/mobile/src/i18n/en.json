@@ -32,10 +32,47 @@
   "summary": {
     "title": "Today's run",
     "time": "Time",
+    "distance": "Distance",
+    "avgPace": "Avg pace",
     "ranTogether": "You ran with {{nickname}}!",
     "kudos": "👏 Send kudos",
     "kudosSent": "Kudos sent!",
+    "share": "📸 Share this run",
+    "shareText": "Ran {{distance}} in {{duration}} with Run Together! Pace {{pace}} 🏃 #RunTogether",
     "done": "Done"
+  },
+  "chat": {
+    "title": "Chat",
+    "placeholder": "Type a message… (contact info is auto-masked)",
+    "send": "Send"
+  },
+  "emergency": {
+    "button": "SOS",
+    "confirmTitle": "Emergency location share",
+    "confirmBody": "Send your current location by SMS to your registered emergency contacts?",
+    "send": "Send",
+    "cancel": "Cancel",
+    "sent": "Your location was sent to your emergency contacts.",
+    "demo": "(Demo) In production an SMS is sent to your contacts."
+  },
+  "auth": {
+    "phoneTitle": "Start with your phone",
+    "phoneHint": "We'll text you a verification code. Phone verification keeps matching safe.",
+    "phonePlaceholder": "+1 555 123 4567",
+    "sendCode": "Send code",
+    "codeTitle": "Enter the code",
+    "codeHint": "Enter the 6-digit code sent to {{phone}}",
+    "verify": "Verify",
+    "error": "Verification failed. Please try again.",
+    "profileTitle": "Create your profile",
+    "gender": "Gender",
+    "female": "Female",
+    "male": "Male",
+    "other": "Other",
+    "ageGroup": "Age group",
+    "femaleOnly": "Match with female runners only",
+    "save": "Let's run",
+    "skipDemo": "Skip and try the demo"
   },
   "settings": {
     "title": "Settings",

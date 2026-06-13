@@ -50,19 +50,20 @@ TypeScript strict, features/ 폴더 구조, 근사 좌표 노출 원칙, 위치�
 | 지시서 항목 | 상태 | 구현 위치 |
 |---|---|---|
 | §2 Supabase 백엔드 | ✅ 완료 | `supabase/migrations/` (스키마+RLS+알고리즘) |
-| §3.1 전화 인증·프로필 | ✅ 스키마/정책 완료, 대시보드 연결만 필요 | `0002_schema.sql` profiles, [USER_TASKS](./USER_TASKS.md) §2 |
+| §3.1 전화 인증·프로필 | ✅ 완료 (앱 OTP·프로필 화면 + 스키마) — SMS 공급자 연결만 필요 | `features/auth/`, `0002_schema.sql` |
 | §3.2 매칭 알고리즘 (페이스→목적→근접) | ✅ 완료 | `0004_functions.sql` `find_match`/`request_match` |
 | §3.2 근사 좌표 마커 | ✅ 완료 (150m 그리드) | `nearby_runners`, `snap_to_grid` |
 | §3.2 예약 매칭 전환 | ✅ 서버 지원 (`p_scheduled_at`) | `request_match` |
 | §3.2 매칭 푸시 | ✅ Edge Function | `functions/notify-match/` |
 | §3.3 만남 지점 추천 (공개 장소) | ✅ 완료 | `recommend_meeting_point` + `public_places` |
-| §3.3 긴급 SMS | ✅ Edge Function (공급자 키만 필요) | `functions/emergency-alert/` |
+| §3.3 긴급 SMS | ✅ 완료 (앱 SOS 버튼 + Edge Function) — 공급자 키만 필요 | `features/safety/EmergencyButton.tsx`, `functions/emergency-alert/` |
 | §3.3 여성 전용 매칭 | ✅ 완료 | `female_only_ok` |
 | §3.3 평가·신고·노쇼 패널티 | ✅ 완료 (트리거+RPC) | `apply_rating`, `report_no_show` |
 | §3.3 첫 매칭 안전 수칙 모달 | ✅ 완료 | `apps/mobile/src/features/safety/` |
-| §3.4 채팅 + PII 마스킹 + 24h 만료 | ✅ DB 완료 (UI는 2차) | `chats` + `mask_pii` + RLS |
+| §3.4 채팅 + PII 마스킹 + 24h 만료 | ✅ 완료 (앱 채팅 UI + 게이트웨이 릴레이 + DB 트리거, 마스킹은 앱/서버/DB 동일 규칙) | `features/chat/`, `gateway.ts`, `chats` + `mask_pii` |
 | §3.2/§9 즉흥 합류 프로토타입 (기술 리스크 검증, §8-1) | ✅ 동작 (테스트 11개) | `server/` + `apps/mobile/` 데모 모드 |
 | 다국어 (한/영) | ✅ 완료 | `apps/mobile/src/i18n/` |
-| §4 GPS 트래킹·공유 카드 | 🔜 2차 (스키마 준비됨: `runs`) | — |
+| §4 GPS 트래킹 (거리·페이스, 지터 필터) | ✅ 완료 (테스트 포함) | `packages/shared/src/tracking.ts` + 러닝 화면 |
+| §4 기록 공유 | ✅ 텍스트 공유 완료 (이미지 카드·인스타 스토리는 3차) | 러닝 요약 모달 |
 | §5 크루·리워드·광고 | 🔜 3차 | — |
 | 지도 SDK (카카오/구글) | 🔜 키 필요 — 현재 레이더 뷰로 대체 | [USER_TASKS](./USER_TASKS.md) §4 |

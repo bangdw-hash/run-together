@@ -19,6 +19,9 @@
 - [ ] **Auth → Phone 활성화** + SMS 공급자 연결 ← 전화번호 OTP 가입(§3.1)에 필수
   - 한국 발송: Solapi / NHN Cloud, 글로벌: Twilio (발신번호 사전등록은 한국 법정 의무)
 - [ ] Database Webhook 설정: `matches` INSERT → `notify-match` Edge Function
+- [ ] 앱에 키 연결: `apps/mobile/.env` 파일에
+  `EXPO_PUBLIC_SUPABASE_URL=...`, `EXPO_PUBLIC_SUPABASE_ANON_KEY=...` 추가
+  → 앱이 자동으로 전화 OTP 로그인 → 프로필 생성 흐름으로 전환됨
 - [ ] `npx supabase secrets set`으로 SMS·FCM 키 등록 (supabase/README.md 참고)
 
 ## 3. 푸시 알림 (FCM)

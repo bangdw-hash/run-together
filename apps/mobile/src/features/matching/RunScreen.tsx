@@ -1,21 +1,25 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FlatList, Modal, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Modal, Pressable, Share, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import {
+  RunTracker,
   bearingDeg,
   haversineM,
+  type ChatMessage,
   type JoinIncoming,
   type LatLng,
-  type LocationPing,
   type NearbyRunner,
   type RendezvousInfo,
+  type TrackStats,
 } from '@run-together/shared';
+import { ChatPanel } from '../chat/ChatPanel';
 import { createConnection } from '../../lib/demo';
 import type { RunConnection } from '../../lib/connection';
 import { useLiveLocation } from '../../lib/location';
-import { formatDuration, formatPace } from '../../lib/format';
+import { formatDistance, formatDuration, formatPace } from '../../lib/format';
 import { useSettings } from '../../state/settings';
 import { colors, radii } from '../../theme';
+import { EmergencyButton } from '../safety/EmergencyButton';
 import { JoinRequestModal } from './JoinRequestModal';
 import { Radar, type RadarBlip } from './Radar';
 import { RendezvousBanner } from './RendezvousBanner';
@@ -27,17 +31,22 @@ interface Props {
 
 interface Partner {
   nickname: string;
-  loc?: LocationPing;
+  loc?: LatLng;
 }
 
 export function RunScreen({ onExit }: Props) {
   const { t } = useTranslation();
   const settings = useSettings();
   const myLoc = useLiveLocation(true);
+  const myLocRef = useRef<LatLng | null>(null);
+  myLocRef.current = myLoc;
 
   const connRef = useRef<RunConnection | null>(null);
+  const trackerRef = useRef(new RunTracker());
   const startedAtRef = useRef(Date.now());
   const [elapsedSec, setElapsedSec] = useState(0);
+  const [stats, setStats] = useState<TrackStats | null>(null);
+  const [mySessionId, setMySessionId] = useState<string | null>(null);
   const [nearby, setNearby] = useState<NearbyRunner[]>([]);
   const [requestedIds, setRequestedIds] = useState<string[]>([]);
   const [incoming, setIncoming] = useState<JoinIncoming | null>(null);
@@ -45,6 +54,10 @@ export function RunScreen({ onExit }: Props) {
   const [rendezvous, setRendezvous] = useState<RendezvousInfo | null>(null);
   const [met, setMet] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [showChat, setShowChat] = useState(false);
+  const showChatRef = useRef(false);
+  const [unread, setUnread] = useState(0);
   const [showSummary, setShowSummary] = useState(false);
   const [kudosSent, setKudosSent] = useState(false);
 
@@ -84,25 +97,33 @@ export function RunScreen({ onExit }: Props) {
           setNotice(t('run.partnerEnded'));
           setTimeout(() => setNotice(null), 4000);
         },
+        onChat: (message) => {
+          setMessages((prev) => [...prev, message]);
+          if (!showChatRef.current) setUnread((n) => n + 1);
+        },
       },
       settings.locale,
     );
     connRef.current = conn;
-    conn.start(
-      {
-        nickname: settings.nickname || 'Runner',
-        paceSecPerKm: settings.paceSecPerKm,
-        visibility: settings.visibility,
-      },
-      myLoc,
-    );
+    conn
+      .start(
+        {
+          nickname: settings.nickname || 'Runner',
+          paceSecPerKm: settings.paceSecPerKm,
+          visibility: settings.visibility,
+        },
+        myLoc,
+      )
+      .then(setMySessionId);
     return () => conn.end();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [myLoc === null]);
 
-  // Stream my position.
+  // Stream my position and feed the tracker.
   useEffect(() => {
-    if (myLoc && connRef.current) connRef.current.ping(myLoc);
+    if (!myLoc) return;
+    connRef.current?.ping(myLoc);
+    setStats(trackerRef.current.add(myLoc));
   }, [myLoc]);
 
   const requestJoin = (runner: NearbyRunner) => {
@@ -116,10 +137,30 @@ export function RunScreen({ onExit }: Props) {
     setIncoming(null);
   };
 
+  const openChat = () => {
+    showChatRef.current = true;
+    setShowChat(true);
+    setUnread(0);
+  };
+  const closeChat = () => {
+    showChatRef.current = false;
+    setShowChat(false);
+  };
+
   const endRun = () => {
     connRef.current?.end();
     connRef.current = null;
     setShowSummary(true);
+  };
+
+  const shareRun = () => {
+    Share.share({
+      message: t('summary.shareText', {
+        duration: formatDuration(elapsedSec),
+        distance: formatDistance(stats?.distanceM ?? 0, settings.units),
+        pace: formatPace(stats?.avgPaceSecPerKm ?? settings.paceSecPerKm, settings.units),
+      }),
+    });
   };
 
   const toRel = (target: LatLng) =>
@@ -131,6 +172,8 @@ export function RunScreen({ onExit }: Props) {
     ? [{ id: 'partner', ...toRel(partner.loc), isPartner: true }]
     : nearby.map((r) => ({ id: r.sessionId, bearingDeg: r.bearingDeg, distanceM: r.distanceM }));
 
+  const livePace = stats?.currentPaceSecPerKm ?? stats?.avgPaceSecPerKm ?? settings.paceSecPerKm;
+
   return (
     <View style={styles.screen}>
       <View style={styles.statsRow}>
@@ -139,8 +182,14 @@ export function RunScreen({ onExit }: Props) {
           <Text style={styles.statValue}>{formatDuration(elapsedSec)}</Text>
         </View>
         <View style={styles.stat}>
+          <Text style={styles.statLabel}>{t('summary.distance')}</Text>
+          <Text style={styles.statValue}>
+            {formatDistance(stats?.distanceM ?? 0, settings.units)}
+          </Text>
+        </View>
+        <View style={styles.stat}>
           <Text style={styles.statLabel}>{t('run.myPace')}</Text>
-          <Text style={styles.statValue}>{formatPace(settings.paceSecPerKm, settings.units)}</Text>
+          <Text style={styles.statValue}>{formatPace(livePace, settings.units)}</Text>
         </View>
       </View>
 
@@ -184,19 +233,60 @@ export function RunScreen({ onExit }: Props) {
         </>
       )}
 
-      <Pressable style={styles.endBtn} onPress={endRun}>
-        <Text style={styles.endText}>{t('run.endRun')}</Text>
-      </Pressable>
+      <View style={styles.actionRow}>
+        <EmergencyButton getLocation={() => myLocRef.current} />
+        {partner && (
+          <Pressable style={styles.chatBtn} onPress={openChat}>
+            <Text style={styles.chatBtnText}>💬 {t('chat.title')}</Text>
+            {unread > 0 && (
+              <View style={styles.badge}>
+                <Text style={styles.badgeText}>{unread}</Text>
+              </View>
+            )}
+          </Pressable>
+        )}
+        <Pressable style={styles.endBtn} onPress={endRun}>
+          <Text style={styles.endText}>{t('run.endRun')}</Text>
+        </Pressable>
+      </View>
 
       <JoinRequestModal request={incoming} units={settings.units} onRespond={respond} />
+
+      {partner && (
+        <ChatPanel
+          visible={showChat}
+          messages={messages}
+          mySessionId={mySessionId}
+          partnerNickname={partner.nickname}
+          onSend={(text) => connRef.current?.sendChat(text)}
+          onClose={closeChat}
+        />
+      )}
 
       <Modal transparent animationType="fade" visible={showSummary}>
         <View style={styles.summaryBackdrop}>
           <View style={styles.summaryCard}>
             <Text style={styles.summaryTitle}>{t('summary.title')}</Text>
-            <Text style={styles.summaryTime}>
-              {t('summary.time')} {formatDuration(elapsedSec)}
-            </Text>
+            <View style={styles.summaryStats}>
+              <View style={styles.summaryStat}>
+                <Text style={styles.summaryStatLabel}>{t('summary.time')}</Text>
+                <Text style={styles.summaryStatValue}>{formatDuration(elapsedSec)}</Text>
+              </View>
+              <View style={styles.summaryStat}>
+                <Text style={styles.summaryStatLabel}>{t('summary.distance')}</Text>
+                <Text style={styles.summaryStatValue}>
+                  {formatDistance(stats?.distanceM ?? 0, settings.units)}
+                </Text>
+              </View>
+              <View style={styles.summaryStat}>
+                <Text style={styles.summaryStatLabel}>{t('summary.avgPace')}</Text>
+                <Text style={styles.summaryStatValue}>
+                  {stats?.avgPaceSecPerKm
+                    ? formatPace(stats.avgPaceSecPerKm, settings.units)
+                    : '—'}
+                </Text>
+              </View>
+            </View>
             {partner && (
               <Text style={styles.summaryTogether}>
                 {t('summary.ranTogether', { nickname: partner.nickname })}
@@ -213,6 +303,9 @@ export function RunScreen({ onExit }: Props) {
                 </Text>
               </Pressable>
             )}
+            <Pressable style={styles.shareBtn} onPress={shareRun}>
+              <Text style={styles.shareText}>{t('summary.share')}</Text>
+            </Pressable>
             <Pressable style={styles.doneBtn} onPress={onExit}>
               <Text style={styles.doneText}>{t('summary.done')}</Text>
             </Pressable>
@@ -225,31 +318,54 @@ export function RunScreen({ onExit }: Props) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.bg, padding: 20, paddingTop: 60 },
-  statsRow: { flexDirection: 'row', gap: 12, marginBottom: 16 },
+  statsRow: { flexDirection: 'row', gap: 8, marginBottom: 16 },
   stat: {
     flex: 1,
     backgroundColor: colors.card,
     borderRadius: radii.md,
     borderWidth: 1,
     borderColor: colors.border,
-    padding: 12,
+    padding: 10,
     alignItems: 'center',
   },
-  statLabel: { color: colors.textDim, fontSize: 12, textTransform: 'uppercase' },
-  statValue: { color: colors.text, fontSize: 26, fontWeight: '800', marginTop: 2 },
+  statLabel: { color: colors.textDim, fontSize: 11, textTransform: 'uppercase' },
+  statValue: { color: colors.text, fontSize: 20, fontWeight: '800', marginTop: 2 },
   notice: { color: colors.gold, textAlign: 'center', marginTop: 10, fontWeight: '600' },
   sectionTitle: { color: colors.text, fontSize: 16, fontWeight: '800', marginTop: 18, marginBottom: 10 },
   list: { flex: 1 },
   empty: { color: colors.textDim, textAlign: 'center', marginTop: 24, lineHeight: 22 },
-  endBtn: {
+  actionRow: { flexDirection: 'row', gap: 10, marginTop: 10, alignItems: 'center' },
+  chatBtn: {
+    backgroundColor: colors.cardAlt,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    borderRadius: radii.full,
+    minHeight: 48,
+    paddingHorizontal: 16,
+    justifyContent: 'center',
+  },
+  chatBtnText: { color: colors.accent, fontWeight: '800' },
+  badge: {
+    position: 'absolute',
+    top: -4,
+    right: -4,
     backgroundColor: colors.warn,
-    minHeight: 52,
+    borderRadius: 9,
+    minWidth: 18,
+    height: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  badgeText: { color: '#fff', fontSize: 11, fontWeight: '800' },
+  endBtn: {
+    flex: 1,
+    backgroundColor: colors.warn,
+    minHeight: 48,
     borderRadius: radii.full,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 10,
   },
-  endText: { color: '#fff', fontWeight: '800', fontSize: 16 },
+  endText: { color: '#fff', fontWeight: '800', fontSize: 15 },
   summaryBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.7)',
@@ -263,8 +379,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   summaryTitle: { color: colors.text, fontSize: 20, fontWeight: '800' },
-  summaryTime: { color: colors.accent, fontSize: 28, fontWeight: '800', marginTop: 12 },
-  summaryTogether: { color: colors.text, fontSize: 15, marginTop: 12, textAlign: 'center' },
+  summaryStats: { flexDirection: 'row', gap: 16, marginTop: 16 },
+  summaryStat: { alignItems: 'center' },
+  summaryStatLabel: { color: colors.textDim, fontSize: 11, textTransform: 'uppercase' },
+  summaryStatValue: { color: colors.accent, fontSize: 20, fontWeight: '800', marginTop: 2 },
+  summaryTogether: { color: colors.text, fontSize: 15, marginTop: 14, textAlign: 'center' },
   kudosBtn: {
     backgroundColor: colors.card,
     borderWidth: 1,
@@ -273,9 +392,21 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     minHeight: 48,
     justifyContent: 'center',
-    marginTop: 16,
+    marginTop: 14,
   },
   kudosText: { color: colors.gold, fontWeight: '700' },
+  shareBtn: {
+    backgroundColor: colors.card,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    borderRadius: radii.full,
+    minHeight: 48,
+    justifyContent: 'center',
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    marginTop: 14,
+  },
+  shareText: { color: colors.accent, fontWeight: '700' },
   doneBtn: {
     backgroundColor: colors.accent,
     borderRadius: radii.full,
@@ -283,7 +414,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignSelf: 'stretch',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 14,
   },
   doneText: { color: colors.accentDark, fontWeight: '800', fontSize: 16 },
 });

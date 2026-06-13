@@ -13,6 +13,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "2.2.0",
     "@run-together/shared": "*",
+    "@supabase/supabase-js": "^2.49.0",
     "expo": "~54.0.0",
     "expo-localization": "~17.0.7",
     "expo-location": "~19.0.7",
@@ -21,6 +22,7 @@
     "react": "19.1.0",
     "react-i18next": "^15.6.0",
     "react-native": "0.81.4",
+    "react-native-url-polyfill": "^2.0.0",
     "socket.io-client": "^4.8.1",
     "zustand": "^5.0.6"
   },
