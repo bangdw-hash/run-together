@@ -1,0 +1,66 @@
+{
+  "app": { "name": "런투게더" },
+  "home": {
+    "tagline": "약속은 필요 없어요.\n지금 나가서, 지금 달리는 사람과 함께.",
+    "nickname": "닉네임",
+    "pace": "평소 페이스",
+    "runNow": "지금 달리기",
+    "settings": "설정",
+    "demoNote": "서버 미설정 — 데모 모드로 주변 러너를 시뮬레이션합니다"
+  },
+  "run": {
+    "elapsed": "경과 시간",
+    "myPace": "페이스",
+    "nearbyTitle": "지금 달리는 중",
+    "nearbyEmpty": "주변에 달리는 사람이 아직 없어요.\n잠시 후 다시 확인해 보세요!",
+    "runningFor": "{{minutes}}분째 달리는 중",
+    "distanceAway": "{{distance}} 거리",
+    "join": "같이 뛰어요",
+    "requestSent": "요청 보냄…",
+    "incomingTitle": "같이 뛰자는 요청이 왔어요!",
+    "incomingBody": "{{nickname}} · 페이스 {{pace}} · {{distance}} 거리",
+    "accept": "수락",
+    "decline": "거절",
+    "declined": "상대가 거절했어요. 다른 러너를 찾아보세요!",
+    "rendezvousTitle": "합류 지점으로 이동하세요",
+    "rendezvousBody": "{{bearing}} 방향 {{distance}} · 약 {{minutes}}분 후 만나요",
+    "partnerEta": "{{nickname}} 도착까지 약 {{minutes}}분",
+    "met": "합류 완료! 이제 같이 달려요 🎉",
+    "partnerEnded": "상대가 러닝을 종료했어요.",
+    "endRun": "러닝 종료"
+  },
+  "summary": {
+    "title": "오늘의 러닝",
+    "time": "시간",
+    "ranTogether": "{{nickname}} 님과 함께 달렸어요!",
+    "kudos": "👏 칭찬 보내기",
+    "kudosSent": "칭찬을 보냈어요!",
+    "done": "완료"
+  },
+  "settings": {
+    "title": "설정",
+    "language": "언어",
+    "korean": "한국어",
+    "english": "English",
+    "units": "거리 단위",
+    "km": "킬로미터",
+    "mi": "마일",
+    "visibility": "내 위치 노출",
+    "visibilityOn": "주변 러너에게 보이기",
+    "visibilityHint": "수락 전에는 항상 150m 근사 위치만 공유됩니다.",
+    "serverUrl": "서버 주소",
+    "serverHint": "비워 두면 데모 모드로 동작합니다 (예: http://192.168.0.10:4000)",
+    "done": "완료"
+  },
+  "safety": {
+    "title": "안전 수칙",
+    "rule1": "처음 만나는 러너와는 공원 입구·지하철역 출구 같은 공개 장소에서 합류하세요.",
+    "rule2": "전화번호 등 개인정보는 공유하지 마세요. 수락 전에는 근사 위치만 공개됩니다.",
+    "rule3": "불쾌하거나 위험한 상황에서는 즉시 러닝을 종료하고 차단·신고하세요.",
+    "confirm": "확인했어요"
+  },
+  "bearing": {
+    "N": "북쪽", "NE": "북동쪽", "E": "동쪽", "SE": "남동쪽",
+    "S": "남쪽", "SW": "남서쪽", "W": "서쪽", "NW": "북서쪽"
+  }
+}

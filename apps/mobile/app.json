@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "Run Together",
+    "slug": "run-together",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "platforms": ["ios", "android", "web"],
+    "splash": {
+      "backgroundColor": "#0B1220"
+    },
+    "ios": {
+      "supportsTablet": false,
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "Run Together shows runners near you and guides you to a meeting point. / 주변 러너를 보여주고 합류 지점으로 안내하기 위해 위치를 사용합니다."
+      }
+    },
+    "android": {
+      "package": "com.runtogether.app",
+      "permissions": ["ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION"]
+    },
+    "plugins": ["expo-location", "expo-localization"]
+  }
+}

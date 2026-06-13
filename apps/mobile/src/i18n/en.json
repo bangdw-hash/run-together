@@ -1,0 +1,66 @@
+{
+  "app": { "name": "Run Together" },
+  "home": {
+    "tagline": "No plans needed.\nGo out now, run with someone running now.",
+    "nickname": "Nickname",
+    "pace": "Usual pace",
+    "runNow": "Run now",
+    "settings": "Settings",
+    "demoNote": "No server configured — simulating nearby runners in demo mode"
+  },
+  "run": {
+    "elapsed": "Elapsed",
+    "myPace": "Pace",
+    "nearbyTitle": "Running now",
+    "nearbyEmpty": "No one is running nearby yet.\nCheck back in a moment!",
+    "runningFor": "running for {{minutes}} min",
+    "distanceAway": "{{distance}} away",
+    "join": "Run together",
+    "requestSent": "Request sent…",
+    "incomingTitle": "Someone wants to run with you!",
+    "incomingBody": "{{nickname}} · pace {{pace}} · {{distance}} away",
+    "accept": "Accept",
+    "decline": "Decline",
+    "declined": "They declined. Find another runner!",
+    "rendezvousTitle": "Head to the meeting point",
+    "rendezvousBody": "{{distance}} {{bearing}} · meet in about {{minutes}} min",
+    "partnerEta": "{{nickname}} arrives in ~{{minutes}} min",
+    "met": "You made it! Run together 🎉",
+    "partnerEnded": "Your partner ended their run.",
+    "endRun": "End run"
+  },
+  "summary": {
+    "title": "Today's run",
+    "time": "Time",
+    "ranTogether": "You ran with {{nickname}}!",
+    "kudos": "👏 Send kudos",
+    "kudosSent": "Kudos sent!",
+    "done": "Done"
+  },
+  "settings": {
+    "title": "Settings",
+    "language": "Language",
+    "korean": "한국어",
+    "english": "English",
+    "units": "Distance units",
+    "km": "Kilometers",
+    "mi": "Miles",
+    "visibility": "Share my presence",
+    "visibilityOn": "Visible to nearby runners",
+    "visibilityHint": "Before an accept, only a ~150 m approximate location is ever shared.",
+    "serverUrl": "Server URL",
+    "serverHint": "Leave empty for demo mode (e.g. http://192.168.0.10:4000)",
+    "done": "Done"
+  },
+  "safety": {
+    "title": "Safety rules",
+    "rule1": "Meet first-time runners at public places — park entrances, subway exits.",
+    "rule2": "Never share personal info like phone numbers. Only approximate locations are shown before an accept.",
+    "rule3": "If anything feels off, end the run immediately and block/report.",
+    "confirm": "Got it"
+  },
+  "bearing": {
+    "N": "north", "NE": "northeast", "E": "east", "SE": "southeast",
+    "S": "south", "SW": "southwest", "W": "west", "NW": "northwest"
+  }
+}
