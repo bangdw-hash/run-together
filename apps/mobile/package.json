@@ -20,9 +20,11 @@
     "expo-status-bar": "~3.0.8",
     "i18next": "^25.3.0",
     "react": "19.1.0",
+    "react-dom": "^19.1.0",
     "react-i18next": "^15.6.0",
     "react-native": "0.81.4",
     "react-native-url-polyfill": "^2.0.0",
+    "react-native-web": "^0.21.2",
     "socket.io-client": "^4.8.1",
     "zustand": "^5.0.6"
   },
