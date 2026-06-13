@@ -37,6 +37,9 @@
     "ranTogether": "{{nickname}} 님과 함께 달렸어요!",
     "kudos": "👏 칭찬 보내기",
     "kudosSent": "칭찬을 보냈어요!",
+    "rateTitle": "함께한 러너는 어땠나요?",
+    "report": "🚩 신고하기",
+    "reported": "신고가 접수됐어요. 검토 후 조치할게요.",
     "share": "📸 기록 공유하기",
     "shareText": "런투게더로 {{duration}} 동안 {{distance}} 달렸어요! 페이스 {{pace}} 🏃 #런투게더 #RunTogether",
     "done": "완료"

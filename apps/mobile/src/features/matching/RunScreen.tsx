@@ -20,6 +20,7 @@ import { formatDistance, formatDuration, formatPace } from '../../lib/format';
 import { useSettings } from '../../state/settings';
 import { colors, radii } from '../../theme';
 import { EmergencyButton } from '../safety/EmergencyButton';
+import { RatingRow } from '../safety/RatingRow';
 import { JoinRequestModal } from './JoinRequestModal';
 import { Radar, type RadarBlip } from './Radar';
 import { RendezvousBanner } from './RendezvousBanner';
@@ -302,6 +303,11 @@ export function RunScreen({ onExit }: Props) {
                   {kudosSent ? t('summary.kudosSent') : t('summary.kudos')}
                 </Text>
               </Pressable>
+            )}
+            {partner && (
+              // Demo/gateway runs have no persistent match id; with the
+              // Supabase backend these calls go through api.rateMatch.
+              <RatingRow onRate={() => {}} onReport={() => {}} />
             )}
             <Pressable style={styles.shareBtn} onPress={shareRun}>
               <Text style={styles.shareText}>{t('summary.share')}</Text>

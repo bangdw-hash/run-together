@@ -37,6 +37,9 @@
     "ranTogether": "You ran with {{nickname}}!",
     "kudos": "👏 Send kudos",
     "kudosSent": "Kudos sent!",
+    "rateTitle": "How was your running partner?",
+    "report": "🚩 Report",
+    "reported": "Report received. We'll review and take action.",
     "share": "📸 Share this run",
     "shareText": "Ran {{distance}} in {{duration}} with Run Together! Pace {{pace}} 🏃 #RunTogether",
     "done": "Done"
